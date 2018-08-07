@@ -191,7 +191,7 @@ function createNearestStore(data, map) {
  * @param descBlock - блок в который добавляется описание метода
  * @return {HTMLElement|HTMLSelectElement|HTMLLegendElement|HTMLTableCaptionElement|HTMLTextAreaElement|HTMLModElement|HTMLHRElement|HTMLOutputElement|HTMLPreElement|HTMLEmbedElement|HTMLCanvasElement|HTMLFrameSetElement|HTMLMarqueeElement|HTMLScriptElement|HTMLInputElement|HTMLUnknownElement|HTMLMetaElement|HTMLStyleElement|HTMLObjectElement|HTMLTemplateElement|MSHTMLWebViewElement|HTMLBRElement|HTMLAudioElement|HTMLIFrameElement|HTMLMapElement|HTMLTableElement|HTMLAnchorElement|HTMLMenuElement|HTMLPictureElement|HTMLParagraphElement|HTMLTableDataCellElement|HTMLTableSectionElement|HTMLQuoteElement|HTMLTableHeaderCellElement|HTMLProgressElement|HTMLLIElement|HTMLTableRowElement|HTMLFontElement|HTMLSpanElement|HTMLTableColElement|HTMLOptGroupElement|HTMLDataElement|HTMLDListElement|HTMLFieldSetElement|HTMLSourceElement|HTMLBodyElement|HTMLDirectoryElement|HTMLDivElement|HTMLUListElement|HTMLHtmlElement|HTMLAreaElement|HTMLMeterElement|HTMLAppletElement|HTMLFrameElement|HTMLOptionElement|HTMLImageElement|HTMLLinkElement|HTMLHeadingElement|HTMLVideoElement|HTMLBaseFontElement|HTMLTitleElement|HTMLButtonElement|HTMLHeadElement|HTMLParamElement|HTMLTrackElement|HTMLOListElement|HTMLDataListElement|HTMLLabelElement|HTMLFormElement|HTMLTimeElement|HTMLBaseElement}
  */
-function createHow(data, methodClass, methodName, methodDescClass, descBlock) {
+function createHow(data, methodClass, methodName, methodDescClass, descBlock, map) {
 	const methodWrap = createElementSingleClass('div', methodClass);
 	methodWrap.innerHTML = `<span class="${methodClass}_Name">${methodName}</span>`;
 	for (let i = 0; i < data.length; i++) {
@@ -201,6 +201,27 @@ function createHow(data, methodClass, methodName, methodDescClass, descBlock) {
 		const methodDesc = createElementSingleClass('div', methodDescClass, data[i].descMethod);
 		methodDesc.id = id;
 		descBlock.appendChild(methodDesc);
+		window.thisRoute ='';
+		methodNameLink.addEventListener('click', function() {
+			let multiRoute = new ymaps.multiRouter.MultiRoute(
+				{
+					referencePoints: [data[i].routeStart,data[i].routeWayPoint,data[i].routeEnd],
+					params: {
+						results: 1,
+						routingMode : data[i].routeMode
+					}
+				},
+				{
+					boundsAutoApply: true
+				}
+			);
+			console.log('thisRote ', thisRoute);
+			if (thisRoute) {
+				map.geoObjects.remove(thisRoute);
+			}
+			thisRoute = multiRoute;
+			map.geoObjects.add(multiRoute);
+		});
 	}
 	return methodWrap;
 }
@@ -268,10 +289,10 @@ function createAddress(data, map) {
 	
 	for (let key in howData) {
 		if (key === 'inCar') {
-			const methodInner = createHow (howData[key], 'Accordion-Car', 'На машине', 'Accordion-Desc', description);
+			const methodInner = createHow (howData[key], 'Accordion-Car', 'На машине', 'Accordion-Desc', description, map);
 			container.appendChild(methodInner);
 		} else if (key === 'inPublic') {
-			const methodInner = createHow (howData[key], 'Accordion-Public', 'Общ. транспортом', 'Accordion-Desc', description);
+			const methodInner = createHow (howData[key], 'Accordion-Public', 'Общ. транспортом', 'Accordion-Desc', description, map);
 			container.appendChild(methodInner);
 		} else {
 		
