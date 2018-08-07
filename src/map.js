@@ -114,7 +114,8 @@ function createNearestStore(data, map) {
 	//Элемент для названия магазина
 	const name = createElementSingleClass('p', 'NearestStores-Name', data.nameStore);
 	//Элемент для названия адреса
-	const address = createElementSingleClass('p', 'NearestStores-Address', data.addressStore);
+	const address = createLink('NearestStores-Address', '#', data.addressStore);
+	//const address = createElementSingleClass('p', 'NearestStores-Address', data.addressStore);
 	
 	/** --- Блок для графика работы --- **/
 	//Обёртка для блока графика
